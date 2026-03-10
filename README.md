@@ -46,7 +46,19 @@ self‑contained and does not read or write any external data.
 ---
 
 ## Requirements
- The code requires Python 3.7+ and the following packages:
-   ---Please Run before running to avoid no library referenced  errors --
-   pip3 install --upgrade pandas numpy matplotlib scikit-learn
-   this was made on fake data and doesnt account for real world cases this is a linear regression model created by me tolu.
+
+The script was developed with Python 3.7+ and depends on the following
+libraries:
+
+* `pandas`
+* `numpy`
+* `matplotlib`
+* `scikit-learn`
+
+Install them into your chosen interpreter/venv before running the
+program:
+
+```bash
+pip install --upgrade pandas numpy matplotlib scikit-learn
+# or, on macOS with the system python:
+# pip3 install --upgrade pandas numpy matplotlib scikit-learn
