@@ -15,6 +15,10 @@ training_data = pd.DataFrame({
                            76300, 81600],
     "military_pct_gdp": [4.9, 4.8, 4.4, 4.0, 3.7, 3.4, 3.3, 3.3, 3.3,
                          3.4, 3.7, 3.5, 3.5, 3.4],
+    "inflation_rate_pct": [1.6, 3.2, 2.1, 1.5, 1.6, 0.1, 1.3, 2.1, 2.4,
+                           1.8, 1.2, 4.7, 8.0, 4.1],
+    "foreign_military_aid_bn": [13.2, 14.1, 15.0, 14.8, 14.5, 14.2, 16.5,
+                                17.1, 18.0, 18.2, 18.5, 20.1, 44.5, 52.3],
     "military_spending_bn_usd": [738, 752, 725, 680, 654, 633, 632, 646,
                                  682, 734, 778, 806, 877, 916],
     "military_troops": [2_270_000, 2_250_000, 2_200_000, 2_150_000, 2_100_000,
@@ -29,7 +33,7 @@ training_data = pd.DataFrame({
 # --------------------
 # 2. MODEL SETUP & EVALUATION
 # --------------------
-features = ["gdp_per_capita_usd", "military_pct_gdp"]
+features = ["gdp_per_capita_usd", "military_pct_gdp", "inflation_rate_pct", "foreign_military_aid_bn"]
 target = "military_spending_bn_usd"
 
 model = LinearRegression()
@@ -49,12 +53,12 @@ plt.grid(True)
 plt.savefig("residuals_plot.png")
 
 # --------------------
-# 3. PROJECTIONS (2024 - 1 year ahead)
+# 3. PROJECTIONS (2025 - 2 years ahead)
 # --------------------
 years = len(training_data) - 1
 latest_data = training_data.iloc[-1]
 
-def project_future_value(col_name, years_ahead=1):
+def project_future_value(col_name, years_ahead=2):
     """Calculates CAGR and projects the value forward."""
     start, end = training_data[col_name].iloc[0], latest_data[col_name]
     cagr = (end / start) ** (1 / years) - 1
@@ -62,14 +66,17 @@ def project_future_value(col_name, years_ahead=1):
 
 # Project values dynamically
 projected = {col: project_future_value(col) for col in [
-    "gdp_per_capita_usd", "military_pct_gdp", "military_troops", 
-    "fighter_active", "nuclear_submarines", "aircraft_carriers"
+    "gdp_per_capita_usd", "military_pct_gdp", "inflation_rate_pct",
+    "foreign_military_aid_bn", "military_troops", "fighter_active",
+    "nuclear_submarines", "aircraft_carriers"
 ]}
 
-# Predict spending for 2024 (in billions)
+# Predict spending for 2025 (in billions)
 future_data = pd.DataFrame([{
     "gdp_per_capita_usd": projected["gdp_per_capita_usd"], 
-    "military_pct_gdp": projected["military_pct_gdp"]
+    "military_pct_gdp": projected["military_pct_gdp"],
+    "inflation_rate_pct": projected["inflation_rate_pct"],
+    "foreign_military_aid_bn": projected["foreign_military_aid_bn"]
 }])
 predicted_spending_bn = model.predict(future_data)[0]
 predicted_spending_usd = predicted_spending_bn * 1_000_000_000
@@ -90,9 +97,9 @@ training_deaths = int(army_strength * TRAINING_DEATH_RATE)
 net_army_strength = army_strength - (retirements + natural_deaths + training_deaths)
 
 # --------------------
-# 5. SIMULATION OUTPUT (2024)
+# 5. SIMULATION OUTPUT (2025)
 # --------------------
-print("\n=== 2024 MILITARY SIMULATION RESULTS (US DATA PROJECTIONS) ===")
+print("\n=== 2025 MILITARY SIMULATION RESULTS (US DATA PROJECTIONS) ===")
 print(f"Predicted military spending = ${predicted_spending_usd:,.0f} (${predicted_spending_bn:,.1f} Billion)")
 print(f"Projected Gross Army Strength (before attrition) = {army_strength:,}")
 print(f"  - Less Retirements: {retirements:,}")
