@@ -17,9 +17,9 @@ training_data = pd.DataFrame({
                          5.3, 5.5, 5.6, 5.8, 5.9],
     "military_spending_usd": [950, 1020, 1080, 1120, 1150, 1450, 1500,
                               1580, 1620, 1650, 1700, 1750, 1800, 1850],
-    "military_troops": [500_000, 520_000, 540_000, 560_000, 580_000,
-                        620_000, 650_000, 680_000, 700_000, 720_000,
-                        750_000, 780_000, 800_000, 820_000],
+    "military_troops": [1_000_000, 1_050_000, 1_100_000, 1_150_000, 1_200_000,
+                        1_250_000, 1_300_000, 1_350_000, 1_400_000, 1_450_000,
+                        1_500_000, 1_550_000, 1_650_000, 1_870_000],
     "fighter_active": [150, 160, 170, 180, 190, 210, 230, 250, 270, 290,
                        310, 330, 350, 360],
     "nuclear_submarines": [12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32,
@@ -145,15 +145,35 @@ carriers = int(project_future_value(
 ))
 
 # --------------------
-# 5. SIMULATION OUTPUT (2024)
+# 5. ARMY ATTRITION MODEL (Projected Reductions)
+# --------------------
+# Annual estimated attrition rates (as percentages of total forces)
+RETIREMENT_RATE = 0.05       # ~5% standard retirement/separation
+NATURAL_DEATH_RATE = 0.001   # ~0.1% expected natural mortality
+TRAINING_DEATH_RATE = 0.0002 # ~0.02% expected training exercise fatalities
+
+# Calculate reductions
+retirements = int(army_strength * RETIREMENT_RATE)
+natural_deaths = int(army_strength * NATURAL_DEATH_RATE)
+training_deaths = int(army_strength * TRAINING_DEATH_RATE)
+
+total_attrition = retirements + natural_deaths + training_deaths
+net_army_strength = army_strength - total_attrition
+
+# --------------------
+# 6. SIMULATION OUTPUT (2024)
 # --------------------
 print("\n=== 2024 MILITARY SIMULATION RESULTS ===")
 print(f"Predicted military spending (USD) = ${predicted_spending:,.0f}")
-print(f"Army strength (personnel) = {army_strength:,}")
+print(f"Projected Gross Army Strength (before attrition) = {army_strength:,}")
+print(f"  - Less Retirements: {retirements:,}")
+print(f"  - Less Natural Deaths: {natural_deaths:,}")
+print(f"  - Less Training Casualties: {training_deaths:,}")
+print(f"Net Army Strength (Active Personnel) = {net_army_strength:,}")
 print(f"Nuclear submarines = {nuclear_subs:,}")
 print(f"Fighter sorties (annual) = {fighter_sorties:,}")
 print(f"Aircraft carriers = {carriers:,}")
 # Calculate some derived metrics
-military_efficiency = predicted_spending / army_strength * 1000
+military_efficiency = predicted_spending / net_army_strength * 1000
 print(f"\nDerived Metrics:")
-print(f"Military efficiency (USD per soldier): ${military_efficiency:,.2f}")
+print(f"Military efficiency (USD per active soldier): ${military_efficiency:,.2f}")

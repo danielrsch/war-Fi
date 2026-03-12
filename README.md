@@ -40,9 +40,17 @@ self‑contained and does not read or write any external data.
    subs and carriers based on the historical series; those rates are then
    applied to the latest values to project one year ahead (for 2024).
 
-5. **Print results**  
-   The script prints the predicted spending, projected counts and a
-   derived “military efficiency” metric.
+5. **Apply Attrition Models (Personnel Reduction)**  
+   To accurately project the Net Active Personnel (anchored near the USA's active
+   ~1.87 million personnel figure), the projected gross army strength is reduced by 
+   estimated annual attrition rates:
+   * **5.0%** Retirements/Separations
+   * **0.1%** Natural Expected Mortality
+   * **0.02%** Training Exercise Casualties
+
+6. **Print results**  
+   The script prints the predicted spending, projected counts (with attrition deducted)
+   and a derived “military efficiency” metric.
 
 
 ## Requirements
