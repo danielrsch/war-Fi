@@ -1,58 +1,55 @@
-# war Fi
+# WarFi: The Military Budget Simulator
 
-This repository contains a small Python projection of
-military‑spending data.  It builds a very simple linear‑regression
-model from real-world United States historical time‑series data (2010-2023) 
-and then uses that model together with a few other trends to produce a 
-2025 “military simulation” report.
+## What is this project?
+WarFi is a simple Python program that tries to predict how much money the United States will spend on its military in the year **2025**. It also predicts how many soldiers, submarines, planes, and aircraft carriers the military will likely have.
 
-The Final primary script is `wfi.py` ; the file is
-self‑contained and does not read or write any external data.
+Think of it like a weather forecast, but instead of predicting rain tomorrow based on the clouds today, it predicts the military budget based on how much the US government has spent in the past.
 
-## What it does
+## How does it work? 
 
-1. **Load historical data**  
-   Creates a `pandas.DataFrame` with 14 years of real-world US public data for:
-    These values can be customised for personal uses
-   * GDP per capita (USD),
-   * military spending as a percentage of GDP,
-   * US inflation rate (%),
-   * US Foreign Military Aid (Billions USD),
-   * total military spending (USD),
-   * number of troops, active fighters, nuclear submarines, carriers, etc.
+We built this program to work in four easy steps:
 
-2. **Fit a model**  
-   A `sklearn.linear_model.LinearRegression` is trained to predict
-   `military_spending_bn_usd` from `gdp_per_capita_usd`, `military_pct_gdp`, 
-   `inflation_rate_pct`, and `foreign_military_aid_bn`.  The R² score is 
-   printed and a residuals plot is saved to check for systematic errors.
+1. **Studying the Past (The Data)**  
+   We give the program a list of actual US history from the years 2010 to 2023. We tell it:
+   * How big the US Economy was (GDP)
+   * The percentage of the economy spent on the military
+   * The inflation rate (how fast prices went up)
+   * The amount of foreign military aid the US sent to other countries
+   * And the exact budget and troop sizes for those years.
 
-   ![Residuals Plot](residuals_plot.png)
+2. **Finding the Pattern (The Math)**  
+   The program uses **Linear Regression**, which is just a fancy math term for "connecting the dots." The program draws a line through all that historical data to figure out the exact mathematical relationship between the economy falling/rising and the military budget getting smaller/bigger. 
 
-3. **Interactive 2025 Parameters (What-If Scenarios)**  
-   Future 2025 economic values are dynamically projected using historical data.
-   However, the script will pause and **prompt you in the terminal** to enter your own 
-   custom values for GDP, Inflation, or Military Aid (if desired). If you 
-   just press `[Enter]`, it will automatically use the calculated historical trend.
+3. **Playing "What-If" (The Simulator)**  
+   When you run the script, it pauses and asks you a question: *What do you think the economy and inflation will look like in 2025?* 
+   You get to be the boss and type in your own guesses! (Or, you can just press `Enter` to skip, and it will use the historical average trend). It takes your answers and uses that "connect the dots" math pattern from earlier to spit out an exact dollar amount for the 2025 budget!
 
-4. **Project other quantities**  
-   Compound annual growth rates (CAGR) are computed for troops, fighters,
-   subs and carriers based on the historical series; those rates are then
-   applied to the latest values to project two years ahead (for 2025).
+4. **Accounting for Real Life (Attrition)**  
+   Instead of just blindly guessing the number of soldiers, the program uses common sense. It predicts the *total* number of soldiers, and then subtracts an estimated 5% for soldiers who retire, and tiny fractions for natural accidents or deaths, so that the final answer is realistic.
 
-5. **Apply Attrition Models (Personnel Reduction)**  
-   To accurately project the Net Active Personnel (anchored near the USA's active
-   ~1.87 million personnel figure), the projected gross army strength is reduced by 
-   estimated annual attrition rates:
-   * **5.0%** Retirements/Separations
-   * **0.1%** Natural Expected Mortality
-   * **0.02%** Training Exercise Casualties
+5. **Saving Your Score (History Log)**
+   The program will save your recent simulated guesses into a file called `simulation_history.json` so you can look back and see what you tested!
 
-6. **Print Results**  
-   The script prints the interactive what-if simulation output in the terminal,
-   including projected counts (with attrition deducted) and a derived 
-   “military efficiency” metric.
-   
+---
+
+## How to use it yourself!
+
+You need to have Python installed on your computer.
+
+1. **Install the required side-packages** by running this in your terminal:
+   ```bash
+   pip install pandas numpy matplotlib scikit-learn
+   ```
+
+2. **Run the simulator**:
+   ```bash
+   python3 wfi.py
+   ```
+
+3. **When the program asks you questions in the terminal**, type your number guesses and press enter!
+
+### Example of what it looks like:
+
 ```text
 ==================================================
 INTERACTIVE MILITARY BUDGET SIMULATOR (2025)
@@ -60,27 +57,20 @@ INTERACTIVE MILITARY BUDGET SIMULATOR (2025)
 Enter your own estimates for 2025 to see how the budget reacts.
 Press [ENTER] to skip and just use the natural historical trend.
 
-Estimated GDP Per Capita in USD (Default: 88427.91): 
+Estimated GDP Per Capita in USD (Default: 88427.91): 95000
 Military Spending as % of GDP (Default: 3.21): 4.5
 Estimated Inflation Rate (%) (Default: 4.74): 3.0
 Foreign Military Aid (Billions USD) (Default: 64.64): 18.0
+
+==================================================
+=== 2025 SIMULATION RESULTS ===
+==================================================
+Predicted Total Military Spending = $1.20 Trillion ($1,198,498,217,114)
+Projected Gross Army Strength (Before Attrition) = 1,934,280
+  - Less Retirements/Separations: 96,714
+  - Less Natural Deaths: 1,934
+Net Active Servicemembers = 1,835,246
+...
 ```
 
-
-## Requirements
-
-The script was developed with Python 3.7+ and depends on the following
-libraries:
-
-* `pandas`
-* `numpy`
-* `matplotlib`
-* `scikit-learn`
-
-Install them into your chosen interpreter/venv before running the
-program:
-
-```bash
-pip install --upgrade pandas numpy matplotlib scikit-learn
-# or, on macOS with the system python:
-# pip3 install --upgrade pandas numpy matplotlib scikit-learn
+Have fun forecasting the future!

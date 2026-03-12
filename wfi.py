@@ -92,8 +92,12 @@ def get_user_input(prompt_text, default_value):
     user_input = input(f"{prompt_text} (Default: {default_value:.2f}): ").strip()
     if not user_input:
         return default_value
+    
+    # Remove common typing symbols that break floats
+    clean_input = user_input.replace("$", "").replace(",", "").replace("%", "").strip()
+    
     try:
-        return float(user_input)
+        return float(clean_input)
     except ValueError:
         print(f"  [!] Invalid number. Using default: {default_value:.2f}")
         return default_value
