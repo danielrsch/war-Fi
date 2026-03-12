@@ -10,9 +10,9 @@ from sklearn.metrics import r2_score
 np.random.seed(42)  # For reproducibility
 training_data = pd.DataFrame({
     "year": pd.date_range(2010, periods=14, freq="YE"),
-    "gdp_per_capita_usd": [11500, 11800, 121000, 123000, 125000, 128000,
+    "gdp_per_capita_usd": [115000, 118000, 121000, 123000, 125000, 128000,
                            130000, 132000, 135000, 137000, 140000, 142000,
-                           145000, 148000],          # <-- usd, not usb
+                           145000, 148000],
     "military_pct_gdp": [4.2, 3.9, 3.7, 3.5, 3.4, 4.8, 4.9, 5.1, 5.2,
                          5.3, 5.5, 5.6, 5.8, 5.9],
     "military_spending_usd": [950, 1020, 1080, 1120, 1150, 1450, 1500,
@@ -37,131 +37,61 @@ target = "military_spending_usd"
 model = LinearRegression()
 model.fit(training_data[features], training_data[target])
 
-# Evaluate model performance
 y_pred = model.predict(training_data[features])
-r2 = r2_score(training_data[target], y_pred)
-print(f"Model R² Score: {r2:.4f}")
+print(f"Model R² Score: {r2_score(training_data[target], y_pred):.4f}")
 
-# Plot residuals (to check for patterns)
-residuals = training_data[target] - y_pred
+# Plot residuals
 plt.figure(figsize=(10, 5))
-plt.scatter(training_data["year"], residuals, color="red")
+plt.scatter(training_data["year"], training_data[target] - y_pred, color="red")
 plt.axhline(y=0, color="blue", linestyle="--")
-plt.title("Residuals Plot (Model Fit Check)")
+plt.title("Residuals Plot")
 plt.xlabel("Year")
 plt.ylabel("Residuals")
 plt.grid(True)
 plt.savefig("residuals_plot.png")
 
 # --------------------
-# 3. compute genuine annual growth rates (CAGR) for the historical series
+# 3. PROJECTIONS (2024 - 1 year ahead)
 # --------------------
-years = len(training_data) - 1  # 14 points span 13 full year‑on‑year intervals
+years = len(training_data) - 1
+latest_data = training_data.iloc[-1]
 
-def compound_rate(start, end, periods):
-    """compound annual growth rate between `start` and `end` over `periods` years"""
-    return (end / start) ** (1 / periods) - 1
+def project_future_value(col_name, years_ahead=1):
+    """Calculates CAGR and projects the value forward."""
+    start, end = training_data[col_name].iloc[0], latest_data[col_name]
+    cagr = (end / start) ** (1 / years) - 1
+    return end * (1 + cagr) ** years_ahead
 
-latest_year_data = training_data.iloc[-1]  # Get last row
+# Project values dynamically
+projected = {col: project_future_value(col) for col in [
+    "gdp_per_capita_usd", "military_pct_gdp", "military_troops", 
+    "fighter_active", "nuclear_submarines", "aircraft_carriers"
+]}
 
-gdp_growth_rate = compound_rate(
-    training_data["gdp_per_capita_usd"].iloc[0],
-    latest_year_data["gdp_per_capita_usd"],
-    years
-)
-
-military_pct_rate = compound_rate(
-    training_data["military_pct_gdp"].iloc[0],
-    latest_year_data["military_pct_gdp"],
-    years
-)
-
-military_troops_rate = compound_rate(
-    training_data["military_troops"].iloc[0],
-    latest_year_data["military_troops"],
-    years
-)
-
-fighter_rate = compound_rate(
-    training_data["fighter_active"].iloc[0],
-    latest_year_data["fighter_active"],
-    years
-)
-
-nuclear_sub_rate = compound_rate(
-    training_data["nuclear_submarines"].iloc[0],
-    latest_year_data["nuclear_submarines"],
-    years
-)
-
-carriers_rate = compound_rate(
-    training_data["aircraft_carriers"].iloc[0],
-    latest_year_data["aircraft_carriers"],
-    years
-)
-
-# --------------------
-# 4. SIMULATION PARAMETERS (2024 - 1 year ahead)
-# --------------------
-
-# Project future values based on those rates
-def project_future_value(current_value, growth_rate, years_ahead=1):
-    return current_value * (1 + growth_rate) ** years_ahead
-
-future_gdp = project_future_value(latest_year_data["gdp_per_capita_usd"], gdp_growth_rate, years_ahead=1)
-future_pct = project_future_value(latest_year_data["military_pct_gdp"], military_pct_rate, years_ahead=1)
-
-# Create future data DataFrame for prediction
-future_data = pd.DataFrame({
-    "gdp_per_capita_usd": [future_gdp],
-    "military_pct_gdp": [future_pct]
-})
-
-# Predict military spending using the trained model
+# Predict spending for 2024
+future_data = pd.DataFrame([{
+    "gdp_per_capita_usd": projected["gdp_per_capita_usd"], 
+    "military_pct_gdp": projected["military_pct_gdp"]
+}])
 predicted_spending = model.predict(future_data)[0]
 
-army_strength = int(project_future_value(
-    latest_year_data["military_troops"],
-    military_troops_rate,
-    years_ahead=1
-))
-
-fighter_sorties = int(project_future_value(
-    latest_year_data["fighter_active"],
-    fighter_rate,
-    years_ahead=1
-))
-
-nuclear_subs = int(project_future_value(
-    latest_year_data["nuclear_submarines"],
-    nuclear_sub_rate,
-    years_ahead=1
-))
-
-carriers = int(project_future_value(
-    latest_year_data["aircraft_carriers"],
-    carriers_rate,
-    years_ahead=1
-))
+army_strength = int(projected["military_troops"])
 
 # --------------------
-# 5. ARMY ATTRITION MODEL (Projected Reductions)
+# 4. ARMY ATTRITION MODEL (Projected Reductions)
 # --------------------
-# Annual estimated attrition rates (as percentages of total forces)
 RETIREMENT_RATE = 0.05       # ~5% standard retirement/separation
 NATURAL_DEATH_RATE = 0.001   # ~0.1% expected natural mortality
 TRAINING_DEATH_RATE = 0.0002 # ~0.02% expected training exercise fatalities
 
-# Calculate reductions
 retirements = int(army_strength * RETIREMENT_RATE)
 natural_deaths = int(army_strength * NATURAL_DEATH_RATE)
 training_deaths = int(army_strength * TRAINING_DEATH_RATE)
 
-total_attrition = retirements + natural_deaths + training_deaths
-net_army_strength = army_strength - total_attrition
+net_army_strength = army_strength - (retirements + natural_deaths + training_deaths)
 
 # --------------------
-# 6. SIMULATION OUTPUT (2024)
+# 5. SIMULATION OUTPUT (2024)
 # --------------------
 print("\n=== 2024 MILITARY SIMULATION RESULTS ===")
 print(f"Predicted military spending (USD) = ${predicted_spending:,.0f}")
@@ -170,10 +100,8 @@ print(f"  - Less Retirements: {retirements:,}")
 print(f"  - Less Natural Deaths: {natural_deaths:,}")
 print(f"  - Less Training Casualties: {training_deaths:,}")
 print(f"Net Army Strength (Active Personnel) = {net_army_strength:,}")
-print(f"Nuclear submarines = {nuclear_subs:,}")
-print(f"Fighter sorties (annual) = {fighter_sorties:,}")
-print(f"Aircraft carriers = {carriers:,}")
-# Calculate some derived metrics
-military_efficiency = predicted_spending / net_army_strength * 1000
+print(f"Nuclear submarines = {int(projected['nuclear_submarines']):,}")
+print(f"Fighter sorties (annual) = {int(projected['fighter_active']):,}")
+print(f"Aircraft carriers = {int(projected['aircraft_carriers']):,}")
 print(f"\nDerived Metrics:")
-print(f"Military efficiency (USD per active soldier): ${military_efficiency:,.2f}")
+print(f"Military efficiency (USD per active soldier): ${predicted_spending / net_army_strength * 1000:,.2f}")
