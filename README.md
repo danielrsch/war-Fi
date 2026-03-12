@@ -25,19 +25,21 @@ self‑contained and does not read or write any external data.
 
 2. **Fit a model**  
    A `sklearn.linear_model.LinearRegression` is trained to predict
-   `military_spending_usb` from `gdp_per_capita_usb` and
+   `military_spending_usd` from `gdp_per_capita_usd` and
    `military_pct_gdp`.  The R² score is printed and a residuals plot is
-   displayed to check for systematic errors.
+   saved to check for systematic errors.
+
+   ![Residuals Plot](residuals_plot.png)
 
 3. **Set up 2024 parameters**  
-   Hypothetical 2024 values for GDP per capita and military‑%‑of‑GDP are
-   used to generate a one‑row `DataFrame` which is fed to the trained
-   model to obtain a spending forecast.
+   Future 2024 values for GDP per capita and military‑%‑of‑GDP are dynamically
+   projected based on historical growth rates. This one‑row `DataFrame` is fed 
+   to the trained model to obtain a spending forecast.
 
 4. **Project other quantities**  
    Compound annual growth rates (CAGR) are computed for troops, fighters,
    subs and carriers based on the historical series; those rates are then
-   applied to the latest values to project four years ahead.
+   applied to the latest values to project one year ahead (for 2024).
 
 5. **Print results**  
    The script prints the predicted spending, projected counts and a

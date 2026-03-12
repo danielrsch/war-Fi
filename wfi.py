@@ -28,10 +28,6 @@ training_data = pd.DataFrame({
                           19]
 })
 
-# Add dummy columns (for robustness)
-training_data["military_titans"] = np.random.randint(100, 200, size=len(training_data))
-training_data["fighter_aircraft"] = np.random.randint(100, 200, size=len(training_data))
-
 # --------------------
 # 2. MODEL SETUP & EVALUATION
 # --------------------
@@ -55,28 +51,10 @@ plt.title("Residuals Plot (Model Fit Check)")
 plt.xlabel("Year")
 plt.ylabel("Residuals")
 plt.grid(True)
-plt.show()
+plt.savefig("residuals_plot.png")
 
 # --------------------
-# 3. SIMULATION PARAMETERS (2024)
-# --------------------
-future_gdp = 149_000  # Predicted GDP per capita in USD
-future_pct = 5.2      # Predicted military percentage of GDP
-
-# Create future data DataFrame for prediction
-future_data = pd.DataFrame({
-    "gdp_per_capita_usd": [future_gdp],
-    "military_pct_gdp": [future_pct]
-})
-
-# Predict military spending using the trained model
-predicted_spending = model.predict(future_data)[0]
-
-# Extract latest values from training data for other simulation elements
-latest_year_data = training_data.iloc[-1]  # Get last row
-
-# --------------------
-# compute genuine annual growth rates (CAGR) for the historical series
+# 3. compute genuine annual growth rates (CAGR) for the historical series
 # --------------------
 years = len(training_data) - 1  # 14 points span 13 full year‑on‑year intervals
 
@@ -84,9 +62,17 @@ def compound_rate(start, end, periods):
     """compound annual growth rate between `start` and `end` over `periods` years"""
     return (end / start) ** (1 / periods) - 1
 
+latest_year_data = training_data.iloc[-1]  # Get last row
+
 gdp_growth_rate = compound_rate(
     training_data["gdp_per_capita_usd"].iloc[0],
     latest_year_data["gdp_per_capita_usd"],
+    years
+)
+
+military_pct_rate = compound_rate(
+    training_data["military_pct_gdp"].iloc[0],
+    latest_year_data["military_pct_gdp"],
     years
 )
 
@@ -114,32 +100,52 @@ carriers_rate = compound_rate(
     years
 )
 
+# --------------------
+# 4. SIMULATION PARAMETERS (2024 - 1 year ahead)
+# --------------------
+
 # Project future values based on those rates
-def project_future_value(current_value, growth_rate, years_ahead=4):
+def project_future_value(current_value, growth_rate, years_ahead=1):
     return current_value * (1 + growth_rate) ** years_ahead
+
+future_gdp = project_future_value(latest_year_data["gdp_per_capita_usd"], gdp_growth_rate, years_ahead=1)
+future_pct = project_future_value(latest_year_data["military_pct_gdp"], military_pct_rate, years_ahead=1)
+
+# Create future data DataFrame for prediction
+future_data = pd.DataFrame({
+    "gdp_per_capita_usd": [future_gdp],
+    "military_pct_gdp": [future_pct]
+})
+
+# Predict military spending using the trained model
+predicted_spending = model.predict(future_data)[0]
 
 army_strength = int(project_future_value(
     latest_year_data["military_troops"],
-    military_troops_rate
+    military_troops_rate,
+    years_ahead=1
 ))
 
 fighter_sorties = int(project_future_value(
     latest_year_data["fighter_active"],
-    fighter_rate
+    fighter_rate,
+    years_ahead=1
 ))
 
 nuclear_subs = int(project_future_value(
     latest_year_data["nuclear_submarines"],
-    nuclear_sub_rate
+    nuclear_sub_rate,
+    years_ahead=1
 ))
 
 carriers = int(project_future_value(
     latest_year_data["aircraft_carriers"],
-    carriers_rate
+    carriers_rate,
+    years_ahead=1
 ))
 
 # --------------------
-# 4. SIMULATION OUTPUT (2024)
+# 5. SIMULATION OUTPUT (2024)
 # --------------------
 print("\n=== 2024 MILITARY SIMULATION RESULTS ===")
 print(f"Predicted military spending (USD) = ${predicted_spending:,.0f}")
