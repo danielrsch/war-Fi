@@ -1,5 +1,5 @@
 # WarFi: The Military Budget Simulator
-
+War Finance Influenced by the book economics of war by Horst Mendershausen.
 ## What is this project?
 WarFi is a simple Python program that tries to predict how much money the United States will spend on its military in the year **2025**. It also predicts how many soldiers, submarines, planes, and aircraft carriers the military will likely have.
 
@@ -7,28 +7,30 @@ Think of it like a weather forecast, but instead of predicting rain tomorrow bas
 
 ## How does it work? 
 
-We built this program to work in four easy steps:
+I built this program to work in four easy steps:
 
 1. **Studying the Past (The Data)**  
-   We give the program a list of actual US history from the years 2010 to 2023. We tell it:
+   I give my program a list of actual US history from the years 2010 to 2023. I tell it:
    * How big the US Economy was (GDP)
    * The percentage of the economy spent on the military
    * The inflation rate (how fast prices went up)
    * The amount of foreign military aid the US sent to other countries
    * And the exact budget and troop sizes for those years.
+   The image for this will be in the folder you forked, showing a linear graph of real-world data during this time period.
 
 2. **Finding the Pattern (The Math)**  
-   The program uses **Linear Regression**, which is just a fancy math term for "connecting the dots." The program draws a line through all that historical data to figure out the exact mathematical relationship between the economy falling/rising and the military budget getting smaller/bigger. 
+   My program uses **Linear Regression**, which is just a fancy math term for "connecting the dots." It draws a line through all that historical data to figure out the exact mathematical relationship between the economy falling/rising and the military budget getting smaller/bigger. 
 
 3. **Playing "What-If" (The Simulator)**  
    When you run the script, it pauses and asks you a question: *What do you think the economy and inflation will look like in 2025?* 
    You get to be the boss and type in your own guesses! (Or, you can just press `Enter` to skip, and it will use the historical average trend). It takes your answers and uses that "connect the dots" math pattern from earlier to spit out an exact dollar amount for the 2025 budget!
 
 4. **Accounting for Real Life (Attrition)**  
-   Instead of just blindly guessing the number of soldiers, the program uses common sense. It predicts the *total* number of soldiers, and then subtracts an estimated 5% for soldiers who retire, and tiny fractions for natural accidents or deaths, so that the final answer is realistic.
+   Instead of just blindly guessing the number of soldiers, my program uses common sense. It predicts the *total* number of soldiers, and then subtracts an estimated 5% for soldiers who retire, and tiny fractions for natural accidents or deaths, so that the final answer is realistic.
 
 5. **Saving Your Score (History Log)**
-   The program will save your recent simulated guesses into a file called `simulation_history.json` so you can look back and see what you tested!
+   My program will save your recent simulated guesses into a file called `simulation_history.json` so you can look back and see what you tested!
+   Please note that this save file automatically has a max length of twenty data entries. After that, it will start deleting the oldest data entry to make room for the newest data entry to avoid massive file sizes and "buffering" or lag when reading it.
 
 ---
 
@@ -46,7 +48,7 @@ You need to have Python installed on your computer.
    python3 wfi.py
    ```
 
-3. **When the program asks you questions in the terminal**, type your number guesses and press enter!
+3. **When my program asks you questions in the terminal**, type your number guesses and press enter!
 
 4. **Clear Your History Log (Optional)**  
    If you ever want to reset the saved `simulation_history.json` tracking file, you can wipe it clean safely at any time by running:
