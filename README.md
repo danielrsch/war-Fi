@@ -49,6 +49,7 @@ You need to have Python installed on your computer.
    ```
 
 3. **When my program asks you questions in the terminal**, type your number guesses and press enter!
+3. **When my program asks you question:s in the terminal**, type your number guesses and press enter!
 
 4. **Clear Your History Log (Optional)**  
    If you ever want to reset the saved `simulation_history.json` tracking file, you can wipe it clean safely at any time by running:
@@ -60,7 +61,7 @@ You need to have Python installed on your computer.
 
 ```text
 ==================================================
-INTERACTIVE MILITARY BUDGET SIMULATOR (2025)
+INTERACTIVE MILITARY BUDGET Forecaster (2025)
 ==================================================
 Enter your own estimates for 2025 to see how the budget reacts.
 Press [ENTER] to skip and just use the natural historical trend.
@@ -82,3 +83,9 @@ Net Active Servicemembers = 1,835,246
 ```
 
 Have fun forecasting the future!
+
+
+##Sneak peak :bowtie:
+-Version 2 will focus on forecasting United kingdom military spending and nhs data
+-Version 3 we go across europe and try to forecast Asain spending 
+
