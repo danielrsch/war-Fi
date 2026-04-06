@@ -30,11 +30,7 @@ if args.clear_history:
     else:
         print("[System] No history file found to clear.")
     sys.exit(0)
-
-
-# ==========================================
 # 1. HISTORICAL DATA (US Public Data 2010-2023)
-# ==========================================
 np.random.seed(42)
 
 historical_data = pd.DataFrame(
