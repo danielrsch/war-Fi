@@ -19,7 +19,7 @@ I built this program to work in four easy steps:
    * And the exact budget and troop sizes for those years.
    The image for this will be in the folder you forked, showing a linear graph of real-world data during this time period.
 
-2. **Finding the Pattern (The Math)**  
+2. **Finding A Pattern (The Math)**
    My program uses **Linear Regression**, which is just a fancy math term for "connecting the dots." It draws a line through all that historical data to figure out the exact mathematical relationship between the economy falling/rising and the military budget getting smaller/bigger. 
 
 3. **Playing "What-If" (The Simulator)**  
@@ -29,14 +29,16 @@ I built this program to work in four easy steps:
 4. **Accounting for Real Life (Attrition)**  
    Instead of just blindly guessing the number of soldiers, my program uses common sense. It predicts the *total* number of soldiers, and then subtracts an estimated 5% for soldiers who retire, and tiny fractions for natural accidents or deaths, so that the final answer is realistic.
 
-5. **Saving Your Score (History Log)**
+5. **Saving Your Score (Like in games we need data of our data)**
    My program will save your recent simulated guesses into a file called `simulation_history.json` so you can look back and see what you tested!
-   Please note that this save file automatically has a max length of twenty data entries. After that, it will start deleting the oldest data entry to make room for the newest data entry to avoid massive file sizes and "buffering" or lag when reading it.
+   This save file automatically has a max length of twenty data entries. After that, it will start deleting the oldest data entry to make room for the newest data entry to avoid massive file sizes and "buffering" or lag when reading it.
 
 ---
 
-## How to use it yourself!
+## How to use it yourself.
 
+If your new to python just follow the instructions
+---A bash script is bieng made to make this easier if requried--
 You need to have Python installed on your computer.
 
 1. **Install the required side-packages** by running this in your terminal:
