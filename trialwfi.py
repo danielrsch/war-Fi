@@ -3,10 +3,7 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
-
-# --------------------
-# 1. LOAD DATA (Simulated)
-# --------------------
+#training dataset with 14 years of data (2010-2023):
 np.random.seed(42)  # For reproducibility
 training_data = pd.DataFrame(
     {
@@ -96,13 +93,10 @@ training_data = pd.DataFrame(
     }
 )
 
-# Add dummy columns (for robustness)
+# dummy data for other military metrics (not used in model but for simulation output)
 training_data["military_titans"] = np.random.randint(100, 200, size=len(training_data))
 training_data["fighter_aircraft"] = np.random.randint(100, 200, size=len(training_data))
-
-# --------------------
-# 2. MODEL SETUP & EVALUATION
-# --------------------
+#model 
 features = ["gdp_per_capita_usb", "military_pct_gdp"]
 target = "military_spending_usb"
 
@@ -189,17 +183,14 @@ carriers = int(
         / 13,
     )
 )
-
-# --------------------
-# 4. SIMULATION OUTPUT (2024)
-# --------------------
+# Output
 print("\n=== 2024 MILITARY SIMULATION RESULTS ===")
 print(f"Predicted military spending (USD) = ${predicted_spending:,.0f}")
 print(f"Army strength (personnel) = {army_strength:,}")
 print(f"Nuclear submarines = {nuclear_subs:,}")
 print(f"Fighter sorties (annual) = {fighter_sorties:,}")
 print(f"Aircraft carriers = {carriers:,}")
-# Calculate some derived metrics
+# Calculating some derived metrics
 military_efficiency = predicted_spending / army_strength * 1000
 print("\nDerived Metrics:")
 print(f"Military efficiency (USD per soldier): ${military_efficiency:,.2f}")
