@@ -10,9 +10,7 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 
-# ==========================================
 # 0. COMMAND LINE ARGUMENTS
-# ==========================================
 parser = argparse.ArgumentParser(description="WarFi - Military Budget Simulator")
 parser.add_argument(
     "--clear-history",
@@ -30,7 +28,8 @@ if args.clear_history:
     else:
         print("[System] No history file found to clear.")
     sys.exit(0)
-# 1. HISTORICAL DATA (US Public Data 2010-2023)
+
+# 1. HISTORICAL DATA (USA Public Data 2010-2023)
 np.random.seed(42)
 
 historical_data = pd.DataFrame(
@@ -153,9 +152,7 @@ historical_data = pd.DataFrame(
     }
 )
 
-# ==========================================
 # 2. TRAIN PREDICTION MODEL
-# ==========================================
 # These factors are used to predict the total military spending
 input_factors = [
     "GDP_Per_Capita",
@@ -187,9 +184,7 @@ plt.ylabel("Prediction Error (Billions USD)")
 plt.grid(True)
 plt.savefig("residuals_plot.png")
 
-# ==========================================
 # 3. FUTURE PROJECTIONS (Default Trends)
-# ==========================================
 total_years = len(historical_data) - 1
 latest_year = historical_data.iloc[-1]
 
@@ -219,9 +214,8 @@ projected_defaults = {
     ]
 }
 
-# ==========================================
-# 4. INTERACTIVE USER PROMPT ("What-If" Analysis)
-# ==========================================
+
+# 4.  USER PROMPT For Custom Scenario
 print("\n" + "=" * 50)
 print("INTERACTIVE MILITARY BUDGET SIMULATOR (2025)")
 print("=" * 50)
@@ -277,9 +271,8 @@ future_scenario = pd.DataFrame(
 predicted_spending_billions = model.predict(future_scenario)[0]
 predicted_spending_usd = predicted_spending_billions * 1_000_000_000
 
-# ==========================================
-# 5. ATTRITION MODEL (Personnel Reduction)
-# ==========================================
+
+# 5. ATTRITION MODEL (trying to predict gradual personnel reduction)
 gross_troops = int(projected_defaults["Total_Troops"])
 
 RETIREMENT_RATE = 0.05  # ~5% standard retirement/separation
@@ -293,9 +286,8 @@ training_deaths = int(gross_troops * TRAINING_DEATH_RATE)
 net_troops = gross_troops - (retirements + natural_deaths + training_deaths)
 
 
-# ==========================================
 # 6. FORMATTING UTILITIES
-# ==========================================
+
 def format_large_number(num):
     """Converts a large number into a readable English string (Trillions/Billions/Millions)."""
     if num >= 1_000_000_000_000:
@@ -308,9 +300,9 @@ def format_large_number(num):
         return f"${num:,.2f}"
 
 
-# ==========================================
+
 # 7. SIMULATION OUTPUT
-# ==========================================
+
 print("\n" + "=" * 50)
 print("=== 2025 SIMULATION RESULTS ===")
 print("=" * 50)
@@ -331,9 +323,8 @@ print("\nDerived Metric (Efficiency):")
 print(f"Budget per Active Soldier = {format_large_number(military_efficiency)}")
 
 
-# ==========================================
+
 # 8. SAVE HISTORY (Last 20 Runs)
-# ==========================================
 def save_simulation_history():
     MAX_HISTORY = 20
     temp_file = HISTORY_FILE + ".tmp"
