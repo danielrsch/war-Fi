@@ -169,8 +169,7 @@ model.fit(historical_data[input_factors], historical_data[target_budget])
 
 predicted_training_budget = model.predict(historical_data[input_factors])
 print(
-    f"Model Accuracy (R² Score): {r2_score(historical_data[target_budget], 
-                                           predicted_training_budget):.4f}"
+    f"Model Accuracy (R² Score): {r2_score(historical_data[target_budget],predicted_training_budget):.4f}"
 )
 
 # Save Error / Residuals Graph
