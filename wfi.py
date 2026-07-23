@@ -147,11 +147,9 @@ historical_data = pd.DataFrame(
             2870,
             2880,
         ],
-        "Nuclear_Submarines": [71, 71, 72, 73, 72, 71, 70,
-                                70, 69, 68, 68, 68, 67, 67],
-        "Aircraft_Carriers": [11, 11, 11, 10, 10, 10, 10, 
-                              11, 11, 11, 11, 11, 11, 11],
-    } 
+        "Nuclear_Submarines": [71, 71, 72, 73, 72, 71, 70, 70, 69, 68, 68, 68, 67, 67],
+        "Aircraft_Carriers": [11, 11, 11, 10, 10, 10, 10, 11, 11, 11, 11, 11, 11, 11],
+    }
 )
 
 # 2. TRAIN PREDICTION MODEL
@@ -169,7 +167,7 @@ model.fit(historical_data[input_factors], historical_data[target_budget])
 
 predicted_training_budget = model.predict(historical_data[input_factors])
 print(
-    f"Model Accuracy (R² Score): {r2_score(historical_data[target_budget],predicted_training_budget):.4f}"
+    f"Model Accuracy (R² Score): {r2_score(historical_data[target_budget], predicted_training_budget):.4f}"
 )
 
 # Save Error / Residuals Graph
@@ -193,7 +191,7 @@ latest_year = historical_data.iloc[-1]
 
 def calculate_future_trend(column_name, target_year=2025):
     """Calculates the historical average growth and projects
-      it out to the target year."""
+    it out to the target year."""
     years_ahead = target_year - 2023  # dataset ends at 2023
     start_value = historical_data[column_name].iloc[0]
     end_value = latest_year[column_name]
@@ -291,6 +289,7 @@ net_troops = gross_troops - (retirements + natural_deaths + training_deaths)
 
 # 6. FORMATTING UTILITIES
 
+
 def format_large_number(num):
     """Converts a large number into a readable English string (Trillions/Billions/Millions)."""
     if num >= 1_000_000_000_000:
@@ -301,7 +300,6 @@ def format_large_number(num):
         return f"${num / 1_000_000:.2f} Million"
     else:
         return f"${num:,.2f}"
-
 
 
 # 7. SIMULATION OUTPUT
@@ -324,7 +322,6 @@ print(f"Aircraft Carriers = {int(projected_defaults['Aircraft_Carriers']):,}")
 military_efficiency = predicted_spending_usd / net_troops if net_troops > 0 else 0.0
 print("\nDerived Metric (Efficiency):")
 print(f"Budget per Active Soldier = {format_large_number(military_efficiency)}")
-
 
 
 # 8. SAVE HISTORY (Last 20 Runs)

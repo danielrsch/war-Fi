@@ -103,7 +103,7 @@ target = "military_spending_usb"
 model = LinearRegression()
 model.fit(training_data[features], training_data[target])
 
-# Evaluate model performance
+# evaluate model performance
 y_pred = model.predict(training_data[features])
 r2 = r2_score(training_data[target], y_pred)
 print(f"Model R² Score: {r2:.4f}")
